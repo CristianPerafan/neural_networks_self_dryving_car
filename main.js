@@ -20,7 +20,7 @@ const car =new Car(road.getLaneCenter(0),100,30,50);
 animate();
 
 function animate(){
-    car.uptade();
+    car.uptade(road.borders);
 
     //This refresh the canvas 
     canvas.height=window.innerHeight;
@@ -37,5 +37,5 @@ function animate(){
     times per seconds
     */
    ctx.restore();
-    requestAnimationFrame(animate);
+   requestAnimationFrame(animate);
 }

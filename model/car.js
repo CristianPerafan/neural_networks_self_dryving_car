@@ -13,7 +13,15 @@ class Car{
         this.friction = 0.05;
         this.angle=0;
 
+        this.sensor = new Sensor(this);
         this.controls = new Control();
+        
+    }
+
+    
+    uptade(roadBorders){
+        this.#move();
+        this.sensor.update(roadBorders); 
     }
 
     //Methods
@@ -33,10 +41,8 @@ class Car{
         ctx.fill();
 
         ctx.restore();
-    }
 
-    uptade(){
-        this.#move();
+        this.sensor.draw(ctx);
     }
 
     #move(){
