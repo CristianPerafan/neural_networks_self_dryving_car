@@ -36,6 +36,10 @@ class Car{
     }
 
     uptade(){
+        this.#move();
+    }
+
+    #move(){
         //To move forward
         if(this.controls.forward){
             this.speed+=this.acceleration;
@@ -70,18 +74,25 @@ class Car{
             this.speed=0;
         }
 
-        if(this.controls.left){
-            this.angle+=0.03;
-    
+
+        if(this.speed!=0){
+            const flip=this.speed>0?1:-1;
+            if(this.controls.left){
+                this.angle+=0.03*flip;
+        
+            }
+            if(this.controls.right){
+                this.angle-=0.03*flip;
+            }
+            
         }
-        if(this.controls.right){
-            this.angle-=0.03;
-        }
+
+
         
         /*
         In base of the unit circle whe use Sen an Co to move
         the car.
-        https://www.mathsisfun.com/geometry/images/unit-circle-sin-cos-tan.svg
+        https://postimg.cc/68K0LV7Z
         */
         
         this.x -= Math.sin(this.angle)*this.speed;

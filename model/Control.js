@@ -49,7 +49,7 @@
                     break;
                 
             }
-            console.table(this);
+
         }
     }
 }
