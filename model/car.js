@@ -15,34 +15,62 @@ class Car{
 
         this.sensor = new Sensor(this);
         this.controls = new Control();
+        this.damaged = false;
         
     }
 
     
     uptade(roadBorders){
-        this.#move();
-        this.sensor.update(roadBorders); 
+        if(!this.damaged){
+            this.#move();
+            this.polygon=this.#createPolygon();
+
+            //To detec if there is a colission with the borders of the road.
+            this.damaged = this.#assesDamage(roadBorders);
+        } 
+
+        this.sensor.update(roadBorders);
     }
 
     //Methods
-    draw(ctx){
-        ctx.save();
-        ctx.translate(this.x,this.y);
-        ctx.rotate(-this.angle);
+    #assesDamage(roadBorders){
+        for(let i = 0;i<roadBorders.length;i++){
+            if(polyIntersect(this.polygon,roadBorders[i])){
+                return true;
+            }
+        }
 
-        ctx.beginPath();
-        ctx.rect(
-            -this.width/2,
-            -this.height/2,
-            this.width,
-            this.height
-        );
+        return false;
+    }
 
-        ctx.fill();
+    #createPolygon(){
+        const points = [];
+        //Distance from the middle of the car to a corner
+        const rad = Math.hypot(this.width,this.height)/2;
+        //Angle of the rad  
+        const alpha = Math.atan2(this.width,this.height);
+         
+        points.push({
+            x:this.x-Math.sin(this.angle-alpha)*rad,
+            y:this.y-Math.cos(this.angle-alpha)*rad
+        });
 
-        ctx.restore();
+        points.push({
+            x:this.x-Math.sin(this.angle+alpha)*rad,
+            y:this.y-Math.cos(this.angle+alpha)*rad
+        });
 
-        this.sensor.draw(ctx);
+        points.push({
+            x:this.x-Math.sin(Math.PI+this.angle-alpha)*rad,
+            y:this.y-Math.cos(Math.PI+this.angle-alpha)*rad
+        });
+
+        points.push({
+            x:this.x-Math.sin(Math.PI+this.angle+alpha)*rad,
+            y:this.y-Math.cos(Math.PI+this.angle+alpha)*rad
+        });
+
+        return points;
     }
 
     #move(){
@@ -103,5 +131,26 @@ class Car{
         
         this.x -= Math.sin(this.angle)*this.speed;
         this.y -= Math.cos(this.angle)*this.speed;
+    }
+
+    draw(ctx){
+        if(this.damaged){
+            ctx.fillStyle="red";
+        }
+        else{
+            ctx.fillStyle="green";
+        }
+
+        ctx.beginPath();
+        ctx.moveTo(this.polygon[0].x,this.polygon[0].y)
+
+        for(let i=1;i<this.polygon.length;i++){
+            ctx.lineTo(this.polygon[i].x,this.polygon[i].y);
+        }
+
+        //Drwa pixels rectangles
+        ctx.fill();
+
+        this.sensor.draw(ctx);
     }
 }
